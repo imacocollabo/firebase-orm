@@ -9,15 +9,11 @@ import { expect } from 'chai';
 import { ArticleComment } from '../examples/entity/ArticleComment';
 import { FirebaseEntityDeserializer, FirebaseEntitySerializer, referenceCluePath } from '../Serializer';
 import { documentReferencePath } from '../EntityBuilder';
-import { findMeta } from '../Entity';
-import { execSync } from 'child_process';
 import { ArticleCommentLike } from '../examples/entity/ArticleCommentLike';
-
-const serviceAccount = require("../../polyrhythm-dev-example-firebase-adminsdk-ed17d-272223a77d.json");
+import { cleanTables } from './utils';
 
 admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    databaseURL: `https://${serviceAccount.project_id}.firebaseio.com`
+    projectId: process.env.FIREBASE_PROJECT_ID,
 });
 
 const db = admin.firestore();
@@ -77,17 +73,6 @@ function getInitialData(): Promise<[Article, ArticleStat, ArticleComment, Articl
 
 addDBToPool('default', db);
 use('default');
-
-async function deleteAllData<T extends {id: string}>(Entity: new () => T) {
-    execSync(`firebase firestore:delete ${findMeta(Entity).tableName} -r --project polyrhythm-dev-example -y`);
-}
-
-async function cleanTables() {
-    await deleteAllData(User);
-    await deleteAllData(Article);
-    await deleteAllData(ArticleStat);
-    await deleteAllData(Category);
-}
 
 describe('FirebaseEntitySerializer and FirebaseEntityDeserializer test', async () => {
     before(async () => {
