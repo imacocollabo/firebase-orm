@@ -1,6 +1,7 @@
 node_modules
 *-firebase-adminsdk-*.json
 .npmrc
+.env
 
 lib/examples
 lib/spec
