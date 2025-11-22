@@ -11,7 +11,7 @@ import {
     JoinColumnSetting
 } from './Entity';
 import { FetchOption, getRepository } from "./Repository";
-import { DocumentReference, DocumentSnapshot, Query, QuerySnapshot, firestore, Transaction } from './type-mapper';
+import { DocumentData, DocumentReference, DocumentSnapshot, Query, QuerySnapshot, firestore, Transaction } from './type-mapper';
 
 export type ReferenceWrap = DocumentReference | Query;
 export type SnapShotWrap = DocumentSnapshot | QuerySnapshot;
@@ -78,7 +78,7 @@ export class FirestoreReference<T> {
         if(this.ref instanceof firestore.DocumentReference || isBrowserOptimizedDocumentReference(this.ref)) {
             const ref = this.ref as DocumentReference;
             if(this.transaction) {
-                await this.transaction.set(ref, params);
+                await this.transaction.set(ref, params as DocumentData);
                 return;
             } else {
                 await ref.set(params);
