@@ -583,3 +583,65 @@ node copyfile.js
 ```
 
 と追記されます。
+
+## Development Setup
+
+### Prerequisites
+
+- Node.js
+- Firebase CLI
+- Firebase project (for testing with emulator)
+
+### Installing Firebase CLI
+
+If you haven't installed Firebase CLI yet, install it globally:
+
+```bash
+npm install -g firebase-tools
+```
+
+### Setting up Firebase Emulator for Testing
+
+This project uses Firebase Firestore Emulator for running tests. Follow these steps to set up the emulator:
+
+#### 1. Initialize Firebase (if not already done)
+
+```bash
+firebase login
+firebase init emulators
+```
+
+Select "Firestore Emulator" when prompted and configure the port (default: 8080).
+
+#### 2. Configure Environment Variables
+
+Create a `.env` file in the project root by copying `.env.sample`:
+
+```bash
+cp .env.sample .env
+```
+
+Edit the `.env` file with your configuration:
+
+```env
+FIRESTORE_EMULATOR_HOST=127.0.0.1:8080
+FIREBASE_PROJECT_ID=your-firebase-project-id
+```
+
+**Note**: The `FIREBASE_PROJECT_ID` can be any string for emulator testing (e.g., "test-project").
+
+#### 3. Run Tests
+
+you can execute tests:
+
+```bash
+npm test
+```
+
+### Building the Project
+
+To compile TypeScript to the `lib/` directory:
+
+```bash
+npm run build
+```
