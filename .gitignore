@@ -3,6 +3,10 @@ node_modules
 .npmrc
 .env
 *.log
+.firebaserc
+firebase.json
+firestore.indexes.json
+firestore.rules
 
 lib/examples
 lib/spec
