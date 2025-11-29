@@ -11,14 +11,10 @@ import { ArticleComment } from '../examples/entity/ArticleComment';
 import { PureReference } from '..';
 import { RecordNotFoundError } from '../Error';
 import { ArticleCommentLike } from '../examples/entity/ArticleCommentLike';
-import { execSync } from 'child_process';
-import { findMeta } from '../Entity';
-
-const serviceAccount = require("../../polyrhythm-dev-example-firebase-adminsdk-ed17d-272223a77d.json");
+import { cleanTables } from './utils';
 
 admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    databaseURL: `https://${serviceAccount.project_id}.firebaseio.com`
+    projectId: process.env.FIREBASE_PROJECT_ID,
 });
 
 const db = admin.firestore();
@@ -29,17 +25,6 @@ function getRandomIntString(max: number = 1000) {
 
 addDBToPool('default', db);
 use('default');
-
-async function deleteAllData<T extends {id: string}>(Entity: new () => T) {
-    execSync(`firebase firestore:delete ${findMeta(Entity).tableName} -r --project ${serviceAccount.project_id} -y`);
-}
-
-async function cleanTables() {
-    await deleteAllData(User);
-    await deleteAllData(Article);
-    await deleteAllData(ArticleStat);
-    await deleteAllData(Category);
-}
 
 describe('Repository test', async () => {
     before(async () => {

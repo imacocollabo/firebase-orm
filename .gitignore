@@ -1,6 +1,12 @@
 node_modules
 *-firebase-adminsdk-*.json
 .npmrc
+.env
+*.log
+.firebaserc
+firebase.json
+firestore.indexes.json
+firestore.rules
 
 lib/examples
 lib/spec
