@@ -1,11 +1,11 @@
-import { Column, OneToMany, PrimaryColumn, FirebaseEntity} from "../../Entity";
+import { Column, OneToMany, PrimaryColumn, FirebaseEntity } from '../../Entity';
 import { Article } from './Article';
 
 @FirebaseEntity('users')
 export class User {
     @PrimaryColumn()
     id: string;
-    
+
     @Column()
     name: string;
 
@@ -13,8 +13,8 @@ export class User {
     age: number;
 
     @Column()
-    description?: string|null;
+    description?: string | null;
 
-    @OneToMany(() => Article, {relationColumn: 'user_id'})
+    @OneToMany(() => Article, { relationColumn: 'user_id' })
     articles: Article[];
 }

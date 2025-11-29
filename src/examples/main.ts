@@ -1,18 +1,18 @@
 import * as admin from 'firebase-admin';
-import { addDBToPool, getCurrentDB, getRepository, runTransaction, use } from "../Repository";
-import { User } from "./entity/User";
-import { ArticleStat } from "./entity/ArticleStat";
+import { addDBToPool, getCurrentDB, getRepository, runTransaction, use } from '../Repository';
+import { User } from './entity/User';
+import { ArticleStat } from './entity/ArticleStat';
 import { Article } from './entity/Article';
 import { Category } from './entity/Category';
 import { FirebaseEntityDeserializer, FirebaseEntitySerializer } from '../Serializer';
 import { ArticleComment } from './entity/ArticleComment';
 
 (async () => {
-    const serviceAccount = require("../../polyrhythm-dev-example-firebase-adminsdk-ed17d-272223a77d.json");
+    const serviceAccount = require('../../polyrhythm-dev-example-firebase-adminsdk-ed17d-272223a77d.json');
 
     admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
-        databaseURL: `https://${serviceAccount.project_id}.firebaseio.com`
+        databaseURL: `https://${serviceAccount.project_id}.firebaseio.com`,
     });
     const db = admin.firestore();
 
@@ -43,11 +43,15 @@ import { ArticleComment } from './entity/ArticleComment';
         await manager.getRepository(ArticleStat).save(articleStat);
 
         const articleComment = new ArticleComment();
-        articleComment.text = 'hello';           
-        
-        await manager.getRepository(ArticleComment, {parentIdMapper: (_) => {
-            return article.id;
-        }}).save(articleComment);
+        articleComment.text = 'hello';
+
+        await manager
+            .getRepository(ArticleComment, {
+                parentIdMapper: _ => {
+                    return article.id;
+                },
+            })
+            .save(articleComment);
 
         return [article, articleComment];
     });

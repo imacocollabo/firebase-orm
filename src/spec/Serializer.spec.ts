@@ -1,6 +1,6 @@
 import 'mocha';
 import * as admin from 'firebase-admin';
-import { addDBToPool, runTransaction, use } from "../Repository";
+import { addDBToPool, runTransaction, use } from '../Repository';
 import { User } from '../examples/entity/User';
 import { ArticleStat } from '../examples/entity/ArticleStat';
 import { Article } from '../examples/entity/Article';
@@ -44,28 +44,36 @@ function getInitialData(): Promise<[Article, ArticleStat, ArticleComment, Articl
         await manager.getRepository(ArticleStat).save(articleStat);
 
         const articleComment = new ArticleComment();
-        articleComment.text = 'hello';           
-        
-        await manager.getRepository(ArticleComment, {parentIdMapper: (Entity) => {
-            switch(Entity) {
-            case Article:
-                return article.id;
-            }
-            throw new Error(`Unknonwn Entity ${Entity.name}`);
-        }}).save(articleComment);
+        articleComment.text = 'hello';
+
+        await manager
+            .getRepository(ArticleComment, {
+                parentIdMapper: Entity => {
+                    switch (Entity) {
+                        case Article:
+                            return article.id;
+                    }
+                    throw new Error(`Unknonwn Entity ${Entity.name}`);
+                },
+            })
+            .save(articleComment);
 
         const like = new ArticleCommentLike();
         like.count = 100;
 
-        await manager.getRepository(ArticleCommentLike, {parentIdMapper: (Entity) => {
-            switch(Entity) {
-            case Article:
-                return article.id;
-            case ArticleComment:
-                return articleComment.id
-            }
-            throw new Error(`Unknonwn Entity ${Entity.name}`);
-        }}).save(like);        
+        await manager
+            .getRepository(ArticleCommentLike, {
+                parentIdMapper: Entity => {
+                    switch (Entity) {
+                        case Article:
+                            return article.id;
+                        case ArticleComment:
+                            return articleComment.id;
+                    }
+                    throw new Error(`Unknonwn Entity ${Entity.name}`);
+                },
+            })
+            .save(like);
 
         return [article, articleStat, articleComment, like];
     });
@@ -75,26 +83,20 @@ addDBToPool('default', db);
 use('default');
 
 describe('FirebaseEntitySerializer and FirebaseEntityDeserializer test', async () => {
-    before(async () => {
-        
-    });
+    before(async () => {});
 
     beforeEach(async () => {
         await cleanTables();
     });
 
-    afterEach(async () => {
-        
-    });
+    afterEach(async () => {});
 
-    after(async () => {
-        
-    });
+    after(async () => {});
 
     context('FirebaseEntitySerializer', () => {
-        it("should serialize article", async () => {
+        it('should serialize article', async () => {
             const [article, articleStat, articleComment, like] = await getInitialData();
-        
+
             const articleJson = FirebaseEntitySerializer.serializeToJSON(article);
             expect(articleJson).haveOwnProperty(referenceCluePath);
             expect(articleJson.user).haveOwnProperty(referenceCluePath);
@@ -103,28 +105,31 @@ describe('FirebaseEntitySerializer and FirebaseEntityDeserializer test', async (
             const articleStatJson = FirebaseEntitySerializer.serializeToJSON(articleStat);
             expect(articleStatJson).haveOwnProperty(referenceCluePath);
 
-            const commnetJSON = FirebaseEntitySerializer.serializeToJSON(articleComment, (Entity) => {
-                switch(Entity) {
-                case Article:
-                    return article.id;
+            const commnetJSON = FirebaseEntitySerializer.serializeToJSON(articleComment, Entity => {
+                switch (Entity) {
+                    case Article:
+                        return article.id;
                 }
-                throw new Error(`Unknonwn Entity ${Entity.name}`);                
+                throw new Error(`Unknonwn Entity ${Entity.name}`);
             });
             expect(commnetJSON).haveOwnProperty(referenceCluePath).to.haveOwnProperty('parent');
 
-            const likeJSON = FirebaseEntitySerializer.serializeToJSON(like, (Entity) => {
-                switch(Entity) {
-                case Article:
-                    return article.id;
-                case ArticleComment:
-                    return articleComment.id
+            const likeJSON = FirebaseEntitySerializer.serializeToJSON(like, Entity => {
+                switch (Entity) {
+                    case Article:
+                        return article.id;
+                    case ArticleComment:
+                        return articleComment.id;
                 }
-                throw new Error(`Unknonwn Entity ${Entity.name}`);                
+                throw new Error(`Unknonwn Entity ${Entity.name}`);
             });
-            expect(likeJSON).haveOwnProperty(referenceCluePath).to.haveOwnProperty('parent').to.haveOwnProperty('child');
-        });    
+            expect(likeJSON)
+                .haveOwnProperty(referenceCluePath)
+                .to.haveOwnProperty('parent')
+                .to.haveOwnProperty('child');
+        });
 
-        it("should failed to serialize articleComment without parentId", async () => {
+        it('should failed to serialize articleComment without parentId', async () => {
             const [_1, _2, articleComment] = await getInitialData();
 
             try {
@@ -135,27 +140,27 @@ describe('FirebaseEntitySerializer and FirebaseEntityDeserializer test', async (
     });
 
     context('FirebaseEntityDeserializer', () => {
-        it("should deserialize article", async () => {
+        it('should deserialize article', async () => {
             const [_article, _articleStat, _articleComment, _like] = await getInitialData();
-        
+
             const articleJson = FirebaseEntitySerializer.serializeToJSON(_article);
-            const commnetJSON = FirebaseEntitySerializer.serializeToJSON(_articleComment, (Entity) => {
-                switch(Entity) {
-                case Article:
-                    return _article.id;
+            const commnetJSON = FirebaseEntitySerializer.serializeToJSON(_articleComment, Entity => {
+                switch (Entity) {
+                    case Article:
+                        return _article.id;
                 }
-                throw new Error(`Unknonwn Entity ${Entity.name}`);                
+                throw new Error(`Unknonwn Entity ${Entity.name}`);
             });
 
-            const likeJSON = FirebaseEntitySerializer.serializeToJSON(_like, (Entity) => {
-                switch(Entity) {
-                case Article:
-                    return _article.id;
-                case ArticleComment:
-                    return _articleComment.id;
+            const likeJSON = FirebaseEntitySerializer.serializeToJSON(_like, Entity => {
+                switch (Entity) {
+                    case Article:
+                        return _article.id;
+                    case ArticleComment:
+                        return _articleComment.id;
                 }
-                throw new Error(`Unknonwn Entity ${Entity.name}`);                
-            });            
+                throw new Error(`Unknonwn Entity ${Entity.name}`);
+            });
 
             const article = FirebaseEntityDeserializer.deserializeFromJSON(Article, articleJson);
             expect(article).haveOwnProperty(documentReferencePath);
@@ -165,58 +170,58 @@ describe('FirebaseEntitySerializer and FirebaseEntityDeserializer test', async (
             const stat = FirebaseEntityDeserializer.deserializeFromJSON(ArticleStat, _articleStat);
             expect(stat).haveOwnProperty(documentReferencePath);
 
-            const comment = FirebaseEntityDeserializer.deserializeFromJSON(ArticleComment, commnetJSON, (Entity) => {
-                switch(Entity) {
-                case Article:
-                    return article.id;
+            const comment = FirebaseEntityDeserializer.deserializeFromJSON(ArticleComment, commnetJSON, Entity => {
+                switch (Entity) {
+                    case Article:
+                        return article.id;
                 }
-                throw new Error(`Unknonwn Entity ${Entity.name}`);                
+                throw new Error(`Unknonwn Entity ${Entity.name}`);
             });
             expect(comment).haveOwnProperty(documentReferencePath);
 
-            const like = FirebaseEntityDeserializer.deserializeFromJSON(ArticleCommentLike, likeJSON, (Entity) => {
-                switch(Entity) {
-                case Article:
-                    return _article.id;
-                case ArticleComment:
-                    return _articleComment.id;
+            const like = FirebaseEntityDeserializer.deserializeFromJSON(ArticleCommentLike, likeJSON, Entity => {
+                switch (Entity) {
+                    case Article:
+                        return _article.id;
+                    case ArticleComment:
+                        return _articleComment.id;
                 }
-                throw new Error(`Unknonwn Entity ${Entity.name}`);                
+                throw new Error(`Unknonwn Entity ${Entity.name}`);
             });
             expect(like).haveOwnProperty(documentReferencePath);
         });
 
-        it("should failed to deserialize articleComment without parentId", async () => {
+        it('should failed to deserialize articleComment without parentId', async () => {
             const [_1, _2, articleComment] = await getInitialData();
 
             try {
                 FirebaseEntityDeserializer.deserializeFromJSON(ArticleComment, articleComment);
                 throw new Error('never reached here');
             } catch {}
-        });        
+        });
 
-        it("should deserialize article from json string", async () => {
+        it('should deserialize article from json string', async () => {
             const [_article, _1, _2, _3] = await getInitialData();
 
             const serialized = FirebaseEntitySerializer.serializeToJSONString(_article);
-            expect(typeof serialized == "string").to.be.true;
+            expect(typeof serialized == 'string').to.be.true;
             const article = FirebaseEntityDeserializer.deserializeFromJSONString(Article, serialized);
             expect(article.id).eq(_article.id);
         });
 
-        it("should serialize/deserialize article with timestamp type converts", async () => {
+        it('should serialize/deserialize article with timestamp type converts', async () => {
             const [article, _1, _2, _3] = await getInitialData();
-        
+
             const serialized = FirebaseEntitySerializer.serializeToJSON(article, undefined, {
-                timeStampToString: true
+                timeStampToString: true,
             });
 
             expect(typeof serialized.postedAt).eq('string');
 
             const deserialized = FirebaseEntityDeserializer.deserializeFromJSON(Article, serialized, undefined, {
-                stringToTimeStamp: true
+                stringToTimeStamp: true,
             });
             expect(deserialized.postedAt.seconds).eq(article.postedAt.seconds);
         });
-    }); 
+    });
 });

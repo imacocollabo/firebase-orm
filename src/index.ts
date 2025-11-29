@@ -17,8 +17,8 @@ export {
     ColumOption,
     RelationOption,
     DateOption,
-    ClassType
-} from './Entity'
+    ClassType,
+} from './Entity';
 
 export {
     TransactionManager,
@@ -29,16 +29,14 @@ export {
     runTransaction,
     addDBToPool,
     use,
-    getCurrentDB
+    getCurrentDB,
 } from './Repository';
 
 export {
     FirebaseEntitySerializer,
-    FirebaseEntityDeserializer
+    FirebaseEntityDeserializer,
 } from './Serializer';
 
-export {
-    RecordNotFoundError
-} from './Error'
+export { RecordNotFoundError } from './Error';
 
 export const PureReference = _getDocumentReference;
