@@ -1,8 +1,18 @@
-import { Column, PrimaryColumn, FirebaseEntity, ManyToOne, OneToOne, ArrayReference, BeforeSave, AfterSave, AfterLoad} from "../../Entity";
-import { ArticleStat } from "./ArticleStat";
-import { Category } from "./Category";
+import {
+    Column,
+    PrimaryColumn,
+    FirebaseEntity,
+    ManyToOne,
+    OneToOne,
+    ArrayReference,
+    BeforeSave,
+    AfterSave,
+    AfterLoad,
+} from '../../Entity';
+import { ArticleStat } from './ArticleStat';
+import { Category } from './Category';
 import { User } from './User';
-import {firestore} from 'firebase-admin'
+import { firestore } from 'firebase-admin';
 
 @FirebaseEntity('articles')
 export class Article {
@@ -27,18 +37,18 @@ export class Article {
     @Column()
     title: string;
 
-    @ManyToOne(() => User, {joinColumnName: 'user_id'})
+    @ManyToOne(() => User, { joinColumnName: 'user_id' })
     user: User;
 
-    @OneToOne(() => ArticleStat, {relationColumn: 'article_id'})
+    @OneToOne(() => ArticleStat, { relationColumn: 'article_id' })
     stat: ArticleStat;
-    
-    @ArrayReference(() => Category, {joinColumnName: 'categories'})
+
+    @ArrayReference(() => Category, { joinColumnName: 'categories' })
     categories: Category[];
 
-    @Column({name: "content_text"})
+    @Column({ name: 'content_text' })
     contentText: string;
 
-    @Column({name: "posted_at"})
+    @Column({ name: 'posted_at' })
     postedAt: firestore.Timestamp;
 }

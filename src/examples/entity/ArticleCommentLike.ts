@@ -1,8 +1,12 @@
-import { Column, PrimaryColumn, NestedFirebaseEntity} from "../../Entity";
-import { Article } from "./Article";
-import { ArticleComment } from "./ArticleComment";
+import { Column, PrimaryColumn, NestedFirebaseEntity } from '../../Entity';
+import { Article } from './Article';
+import { ArticleComment } from './ArticleComment';
 
-@NestedFirebaseEntity('article_comment_likes', () => Article, () => ArticleComment)
+@NestedFirebaseEntity(
+    'article_comment_likes',
+    () => Article,
+    () => ArticleComment,
+)
 export class ArticleCommentLike {
     @PrimaryColumn()
     id: string;

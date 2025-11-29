@@ -1,5 +1,5 @@
-import { Column, PrimaryColumn, NestedFirebaseEntity} from "../../Entity";
-import { Article } from "./Article";
+import { Column, PrimaryColumn, NestedFirebaseEntity } from '../../Entity';
+import { Article } from './Article';
 
 @NestedFirebaseEntity('article_comments', () => Article)
 export class ArticleComment {
