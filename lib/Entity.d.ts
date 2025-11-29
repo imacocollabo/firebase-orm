@@ -2,13 +2,13 @@ import 'reflect-metadata';
 export declare type ClassType<T> = {
     new (...args: any[]): T;
 };
-export declare type ColumOption = {
+export type ColumOption = {
     name: string;
 };
-export declare type RelationOption = {
+export type RelationOption = {
     name: string;
 };
-export declare type DateOption = {
+export type DateOption = {
     name: string;
 };
 export interface ColumnSetting {
@@ -18,7 +18,7 @@ export interface ColumnSetting {
         name?: string;
     };
 }
-export declare type JoinOption = {
+export type JoinOption = {
     relationColumn?: string;
     joinColumnName?: string;
 };
@@ -68,22 +68,22 @@ export declare class _UpdateDateColumnSetting<T> implements ColumnSetting {
     propertyKey: string;
     constructor(propertyKey: string);
 }
-export declare type HookTiming = 'afterLoad' | 'beforeSave' | 'afterSave';
+export type HookTiming = 'afterLoad' | 'beforeSave' | 'afterSave';
 export declare class _HookFunction {
     timing: HookTiming;
     functionName: string;
     constructor(timing: HookTiming, functionName: string);
 }
-export declare type EntityMetaInfo = {
+export type EntityMetaInfo = {
     tableName: string;
     Entity: Function;
     parentEntityGetters?: (() => Function)[];
 };
 export declare function callHook(meta: EntityMetaData, resource: any, timing: HookTiming): void;
-export declare type EntityColumnInfo = {
+export type EntityColumnInfo = {
     columns: (ColumnSetting | JoinColumnSetting)[];
 };
-export declare type EntityMetaData = EntityMetaInfo & EntityColumnInfo & {
+export type EntityMetaData = EntityMetaInfo & EntityColumnInfo & {
     hooks: _HookFunction[];
 };
 export declare function findMeta(Entity: Function): EntityMetaData;

@@ -1,8 +1,8 @@
 import { EntityMetaData } from './Entity';
-import { FetchOption } from "./Repository";
-import { DocumentReference, DocumentSnapshot, Query, QuerySnapshot } from './type-mapper';
-export declare type ReferenceWrap = DocumentReference | Query;
-export declare type SnapShotWrap = DocumentSnapshot | QuerySnapshot;
+import { FetchOption } from './Repository';
+import { DocumentReference, DocumentSnapshot, Query, QuerySnapshot, Transaction } from './type-mapper';
+export type ReferenceWrap = DocumentReference | Query;
+export type SnapShotWrap = DocumentSnapshot | QuerySnapshot;
 export declare type QueryPartialEntity<T> = {
     [P in keyof T]?: T[P] | (() => string);
 };
@@ -15,13 +15,13 @@ export declare class SnapShotBox {
     constructor(snapshot: SnapShotWrap);
     unbox(): {
         id: string;
-        __firestore_document_reference__: FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData>;
+        __firestore_document_reference__: FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData, FirebaseFirestore.DocumentData>;
     }[] | null;
 }
 export declare class FirestoreReference<T> {
     ref: ReferenceWrap;
-    transaction?: FirebaseFirestore.Transaction | undefined;
-    constructor(ref: ReferenceWrap, transaction?: FirebaseFirestore.Transaction | undefined);
+    transaction?: Transaction | undefined;
+    constructor(ref: ReferenceWrap, transaction?: Transaction | undefined);
     get(): Promise<SnapShotBox>;
     set(params: QueryPartialEntity<T>): Promise<void>;
     update(params: QueryPartialEntity<T>): Promise<void>;
